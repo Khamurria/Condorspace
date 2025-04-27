@@ -1,0 +1,332 @@
+/* CONDORSPACE - TEAM PARALLAX */
+/* Stili generali */
+body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #050510; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e0e0ff; overflow: hidden; }
+#mainLayout { display: flex; align-items: flex-start; background-color: #0c0c18; border-radius: 8px; box-shadow: 0 0 25px rgba(0, 180, 255, 0.2); padding: 10px; opacity: 0; transition: opacity 0.5s ease-in; position: relative; z-index: 1; pointer-events: none; }
+#mainLayout.visible { opacity: 1; pointer-events: auto; }
+
+/* Logo PARALLAX */
+#parallaxLogoSplash {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px; /* Ridotto della metà rispetto al valore originale */
+    height: 200px; /* Ridotto della metà rispetto al valore originale */
+    background-image: url('assets/images/logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 100;
+    opacity: 0;
+    animation: fadeInOut 4s ease-in-out forwards;
+}
+
+/* Logo PARALLAX piccolo - RIMOSSO completamente */
+#parallaxLogoSmall {
+    display: none; /* Completamente rimosso dalla visualizzazione */
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; display: none; }
+}
+
+/* High Score Container & Title Header */
+#highScoreContainer { 
+    width: 180px; 
+    height: 640px; 
+    padding: 0; 
+    margin-right: 15px; 
+    background-color: rgba(26, 26, 42, 0.8); 
+    border: 1px solid #333; 
+    border-radius: 5px; 
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6); 
+    display: flex; 
+    flex-direction: column; 
+    color: #c0c0dd; 
+    overflow: hidden; /* Assicura che il contenuto rimanga all'interno del contenitore */
+}
+#titleHeader { 
+    padding: 25px 15px 5px 15px; /* Aumentato padding superiore */
+    text-align: center; 
+    border-bottom: 1px solid #445566; 
+    background-color: rgba(0,0,0,0.2); 
+    flex-shrink: 0; 
+}
+#titleHeader canvas { 
+    margin-bottom: 5px;
+    width: 80px; /* Dimensione fissa */
+    height: 80px; /* Dimensione fissa */
+    object-fit: contain; /* Mantiene le proporzioni */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+#titleHeader h1 { 
+    font-size: 1.2em; /* Ridotto da 1.4em */
+    margin: 0 0 2px 0; 
+    color: #49daff; 
+    text-shadow: 0 0 8px #49daff; 
+    letter-spacing: 2px; 
+    font-family: 'VT323', monospace; 
+    text-transform: uppercase;
+}
+#titleHeader h2 { 
+    display: none; /* MODIFICATO: Nascosto il sottotitolo */
+}
+#highScoreContent { padding: 10px 15px; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
+#highScoreContent h3 { margin-top: 5px; margin-bottom: 15px; color: #aaccff; text-align: center; border-bottom: 1px solid #445566; padding-bottom: 8px; font-size: 1.1em; letter-spacing: 1px; }
+#highScoreList { list-style: none; padding: 0; margin: 0 0 20px 0; font-size: 14px; flex-grow: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #445566 #0c0c18; }
+#highScoreList::-webkit-scrollbar { width: 6px; }
+#highScoreList::-webkit-scrollbar-track { background: #0c0c18; }
+#highScoreList::-webkit-scrollbar-thumb { background-color: #445566; border-radius: 3px; }
+#highScoreList li { display: flex; justify-content: space-between; margin-bottom: 6px; padding: 3px 5px; border-radius: 3px; background-color: rgba(0,0,0,0.1); border-left: 3px solid transparent; transition: background-color 0.3s, border-left 0.3s; }
+#highScoreList li:hover { background-color: rgba(255, 255, 255, 0.15); }
+#highScoreList li span:first-child { font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+#highScoreList li span:last-child { color: #ffff88; min-width: 40px; text-align: right; }
+.instructions { margin-top: auto; padding: 15px 0 5px 0; border-top: 1px solid #445566; font-size: 13px; color: #bbddff; text-align: left; text-shadow: 0 0 4px rgba(100, 180, 255, 0.8); flex-shrink: 0; }
+
+/* Canvas & Game Area */
+#canvasWrapper { position: relative; width: 480px; height: 640px; overflow: hidden; margin: 0; padding: 0; }
+#gameCanvas { border: 1px solid #303050; box-shadow: 0 0 15px rgba(0, 150, 255, 0.3); display: block; background-color: #0a0a1a; width: 100%; height: 100%; cursor: default; transition: border-color 0.3s ease; }
+#uiSidebar { width: 180px; padding: 10px 15px; margin-left: 15px; background-color: rgba(26, 26, 42, 0.8); border: 1px solid #333; border-radius: 5px; box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6); height: 640px; display: flex; flex-direction: column; }
+#uiSidebar h3 { margin-top: 5px; margin-bottom: 15px; color: #aaccff; text-align: center; border-bottom: 1px solid #445566; padding-bottom: 8px; font-size: 1.1em; letter-spacing: 1px; }
+#uiSidebar p { margin: 8px 0; font-size: 15px; color: #c0c0dd; display: flex; justify-content: space-between; }
+#uiSidebar span { font-weight: bold; color: #fff; background-color: rgba(0, 0, 0, 0.2); padding: 1px 4px; border-radius: 3px; min-width: 40px; text-align: right; }
+.shieldActiveUI { color: #80ffff !important; font-weight: bold; }
+#healthBarContainer { height: 10px; background-color: rgba(255,0,0,0.3); border: 1px solid #800; border-radius: 2px; margin-top: 2px; overflow: hidden; }
+#healthBar { height: 100%; width: 100%; background-color: #40ff40; border-radius: 1px; transition: width 0.2s ease-out; }
+#healthValue { font-size: 0.9em; }
+
+/* Stile per il display del nome cadetto */
+#cadetNameContainer {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+    padding: 5px 0;
+    border-top: 1px solid #445566;
+    border-bottom: 1px solid #445566;
+}
+#cadetNameContainer div:first-child {
+    color: #aaccff;
+    font-size: 0.9em;
+    margin-bottom: 3px;
+}
+#cadetNameDisplay {
+    color: #ffaa44;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+#cadetNameContainer div:last-child {
+    color: #aaccff;
+    font-size: 0.8em;
+    margin-top: 3px;
+}
+
+/* Boss Health */
+#bossHealthBarContainer { position: absolute; top: 10px; left: 10%; width: 80%; height: 18px; background-color: rgba(100, 0, 0, 0.7); border: 2px solid #ff8888; border-radius: 4px; z-index: 60; display: none; overflow: hidden; }
+#bossHealthBar { height: 100%; width: 100%; background-color: #ff4444; border-radius: 2px; transition: width 0.3s ease-out; }
+#bossHealthText { position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 12px; font-weight: bold; color: #fff; line-height: 18px; text-shadow: 1px 1px 2px black; }
+
+/* Overlays & Buttons */
+.overlayButton { padding: 15px 30px; font-size: 20px; cursor: pointer; color: #fff; border-radius: 5px; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); transition: all .2s ease; margin-top: 10px; }
+#startButton { display: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background-color: #2a9fd8; border: 2px solid #1c6d9a; box-shadow: 0 0 15px rgba(40, 160, 220, 0.7); z-index: 20; }
+#startButton:hover:not(:disabled) { background-color: #3ab0e8; box-shadow: 0 0 20px rgba(60, 180, 240, 0.9); transform: translate(-50%, -50%) scale(1.05); }
+#startButton:disabled { background-color: #555; border-color: #444; cursor: wait; opacity: 0.7; }
+#gameOverOverlay { display: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 380px; padding: 25px; background-color: rgba(10, 10, 30, 0.95); border: 2px solid #667799; border-radius: 10px; text-align: center; box-shadow: 0 0 25px rgba(100, 120, 180, 0.5); z-index: 30; flex-direction: column; align-items: center; transition: border-color 0.5s ease; }
+#gameOverOverlay.victory { border-color: #ffd700; }
+#gameOverOverlay h2 { margin-top: 0; margin-bottom: 15px; color: #ff6666; font-size: 2.3em; text-shadow: 0 0 10px rgba(255, 50, 50, 0.7); }
+#gameOverOverlay.victory h2 { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8); }
+#gameOverOverlay p { font-size: 1.1em; color: #ddddff; margin-bottom: 15px; }
+#finalScore { font-weight: bold; color: #ffff88; font-size: 1.2em; }
+#finalScore span { display: inline-block; margin-left: 5px; } /* For trophy */
+#highScoreEntry { display: none; width: 85%; margin-top: 15px; }
+#highScoreEntry label { display: block; margin-bottom: 5px; font-size: 1em; color: #aaccff; }
+#highScoreEntry label span { display: inline-block; margin-left: 5px; } /* For trophy in label */
+#playerNameInput { width: calc(100% - 22px); padding: 9px 10px; font-size: 1em; border: 1px solid #667799; background-color: #1a1a3a; color: #e0e0ff; border-radius: 4px; text-align: center; margin-top: 5px; }
+#saveScoreButton { background-color: #f0ad4e; border: 2px solid #eea236; box-shadow: 0 0 15px rgba(240, 173, 78, 0.6); }
+#saveScoreButton:hover { background-color: #f3bd72; box-shadow: 0 0 20px rgba(240, 173, 78, 0.8); transform: scale(1.05); }
+#restartButton { background-color: #5cb85c; border: 2px solid #4cae4c; box-shadow: 0 0 15px rgba(92, 184, 92, 0.6); }
+#restartButton:hover { background-color: #6cd96c; box-shadow: 0 0 20px rgba(110, 200, 110, 0.8); transform: scale(1.05); }
+#pauseOverlay { display: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 20, 0.7); z-index: 40; justify-content: center; align-items: center; text-align: center; font-size: 2.5em; color: #aaccff; text-shadow: 0 0 10px #00ffff; pointer-events: none; }
+#uiMessageDisplay { position: absolute; top: 40%; left: 50%; transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.75); color: #ff6666; padding: 10px 20px; border-radius: 5px; font-size: 1.3em; font-weight: bold; z-index: 50; text-align: center; display: block; text-shadow: 1px 1px 2px black; opacity: 0; transition: opacity 0.3s ease-out; pointer-events: none; }
+#uiMessageDisplay.visible { opacity: 1; }
+
+/* --- Intro Styles --- */
+#introOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; z-index: 100; display: flex; justify-content: center; align-items: center; overflow: hidden; perspective: 400px; font-family: 'VT323', monospace; opacity: 1; transition: opacity 1s ease-out; }
+#introOverlay.hidden { opacity: 0; pointer-events: none; }
+#introSequence { position: relative; width: 100%; height: 100%; }
+#introLogoContainer { 
+    position: absolute; 
+    top: 40%; /* Spostato più in alto per evitare sovrapposizioni col testo */
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    text-align: center; 
+    color: #49daff; 
+    opacity: 0; 
+    animation: fadeInLogo 3s ease-out forwards; /* Durata ridotta */
+    z-index: 102; 
+}
+#introLogoCanvas { display: block; margin: 0 auto 10px auto; }
+#introGameTitle { 
+    font-size: 3.5em; 
+    margin: 0; 
+    text-shadow: 0 0 15px #49daff, 0 0 5px #fff; 
+    letter-spacing: 4px; 
+    color: #49daff;
+    text-transform: uppercase;
+    font-family: 'VT323', monospace;
+}
+#introGameSubtitle { 
+    font-size: 1.2em; 
+    margin: 0; /* Ridotto il margine per avvicinarlo al titolo */
+    color: #a0e0ff; 
+    text-shadow: 0 0 5px #a0e0ff; 
+    white-space: nowrap; /* Mantiene tutto su una riga */
+    font-family: 'VT323', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+@keyframes fadeInLogo { 
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } 
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 
+    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); } /* Ripristinato: il logo deve scomparire */
+}
+#crawlContainer { 
+    position: absolute; 
+    bottom: 0; 
+    height: 200%; 
+    width: 90%; 
+    max-width: 800px; 
+    left: 50%; 
+    transform-origin: 50% 100%; 
+    transform: translateX(-50%) rotateX(25deg); 
+    animation: crawl 60s linear 3.5s forwards; /* Ridotto il tempo d'attesa */
+    opacity: 0; 
+    z-index: 101; 
+}
+#crawlContent { color: #a0e0ff; font-size: 1.8em; line-height: 1.45em; text-align: left; text-shadow: 0 0 8px #49daff; }
+#crawlContent .subtitle { font-size: 1.2em; text-align: center; margin-bottom: 1.5em; color: #fff; text-shadow: 0 0 10px #a0e0ff; }
+#crawlContent p { margin-bottom: 1.2em; position: relative; padding-left: 30px; }
+#crawlContent p:before { content: ">"; position: absolute; left: 0; color: #49daff; }
+@keyframes crawl { 0% { bottom: -100%; opacity: 1; } 100% { bottom: 110%; opacity: 1; } }
+#skipIntroButton { position: absolute; bottom: 20px; right: 20px; padding: 10px 20px; font-size: 14px; background-color: rgba(0, 0, 0, 0.7); color: #49daff; border: 1px solid #49daff; cursor: pointer; z-index: 103; opacity: 0.7; transition: opacity 0.3s, background-color 0.3s; font-family: 'VT323', monospace; }
+#skipIntroButton:hover { opacity: 1; background-color: rgba(255, 255, 255, 0.2); color: #eee; }
+
+/* Effetto terminale retrò */
+.crt-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+    z-index: 104;
+}
+
+/* Terminal header e footer */
+#terminal-header {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1em;
+    color: #49daff;
+    text-shadow: 0 0 5px #49daff;
+    padding: 5px;
+    z-index: 102;
+    text-align: left;
+    opacity: 0;
+    animation: fadeIn 2s ease-in forwards 2s;
+    max-width: 50%;
+}
+
+#terminal-footer {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 1em;
+    color: #49daff;
+    text-shadow: 0 0 5px #49daff;
+    padding: 5px;
+    z-index: 102;
+    text-align: left;
+    opacity: 0;
+    animation: fadeIn 2s ease-in forwards 2s;
+    max-width: 50%;
+}
+
+/* Effetto sfarfallio del terminale */
+@keyframes textShadowFlicker {
+    0% { text-shadow: 0 0 5px rgba(73, 218, 255, 0.5); }
+    10% { text-shadow: 0 0 7px rgba(73, 218, 255, 0.7); }
+    20% { text-shadow: 0 0 5px rgba(73, 218, 255, 0.5); }
+    30% { text-shadow: 0 0 8px rgba(73, 218, 255, 0.8); }
+    40% { text-shadow: 0 0 6px rgba(73, 218, 255, 0.6); }
+    50% { text-shadow: 0 0 5px rgba(73, 218, 255, 0.5); }
+    60% { text-shadow: 0 0 7px rgba(73, 218, 255, 0.7); }
+    70% { text-shadow: 0 0 5px rgba(73, 218, 255, 0.5); }
+    80% { text-shadow: 0 0 6px rgba(73, 218, 255, 0.6); }
+    90% { text-shadow: 0 0 7px rgba(73, 218, 255, 0.7); }
+    100% { text-shadow: 0 0 5px rgba(73, 218, 255, 0.5); }
+}
+
+.flicker-text {
+    animation: textShadowFlicker 5s infinite;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Cursor blink effect */
+@keyframes blink {
+    0% { opacity: 1; }
+    49% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 20px;
+    background-color: #49daff;
+    margin-left: 5px;
+    animation: blink 1s infinite;
+}
+
+/* Registrazione Cadetto */
+#cadetRegistrationScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 95;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    pointer-events: none;
+}
+
+#cadetRegistrationScreen.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#cadetRegistrationContainer {
+    width: 600px;
+    height: 500px;
+    background-color: #0f0f1e;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(73, 218, 255, 0.4);
+}
