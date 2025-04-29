@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CONDORSPACE - TEAM PARALLAX</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Utilizzo di VT323, un font monospace per effetto terminale -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap">
+    <style>
+        /* Stile per la schermata di pre-splash */
+        #preStartScreen {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease-out;
+        }
+        
+        #preStartButton {
+            background-color: transparent;
+            color: #49daff;
+            border: 2px solid #49daff;
+            border-radius: 0;
+            padding: 15px 30px;
+            font-size: 24px;
+            font-family: 'VT323', monospace;
+            cursor: pointer;
+            text-shadow: none;
+            box-shadow: none;
+            transition: all .2s ease;
+            letter-spacing: 2px;
+        }
+
+        #preStartButton:hover {
+            background-color: rgba(73, 218, 255, 0.1);
+            box-shadow: 0 0 10px rgba(73, 218, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio pre-caricati (nascosti) -->
+    <div id="audioPreload" style="display:none;">
+        <!-- I file MP3 verranno caricati dinamicamente dall'AudioSystem -->
+    </div>
+
+    <!-- Pre-Start Screen (solo pulsante START senza altro testo) -->
+    <div id="preStartScreen">
+        <button id="preStartButton">START</button>
+    </div>
+
+    <!-- Schermata Logo PARALLAX (ora completamente separata) -->
+    <div id="splashScreen" style="position: fixed; width: 100%; height: 100%; background-color: #000; z-index: 9999; display: none;">
+        <div id="parallaxLogoSplash"></div>
+    </div>
+
+    <!-- Intro Terminale -->
+    <div id="introOverlay">
+        <div id="terminal-header" class="flicker-text">
+            DEMAND GALATTICO DEFCOM v3.7.2<br>
+            RAM: 16384Kb ONLINE<br>
+            RAPTOR-X MISSION BRIEFING
+        </div>
+        
+        <div id="terminal-footer" class="flicker-text">
+            ENCRYPTION: ENABLED<br>
+            CMDR CONDOR AUTH: OK
+        </div>
+        
+        <div id="introSequence">
+            <div id="introLogoContainer">
+                <canvas id="introLogoCanvas" width="300" height="150"></canvas>
+                <h1 id="introGameTitle" class="flicker-text">CONDORSPACE</h1>
+                <h2 id="introGameSubtitle" class="flicker-text">NETHEX CONTRO IL DEMAND GALATTICO</h2>
+            </div>
+            <div id="crawlContainer">
+                <div id="crawlContent">
+                    <div class="subtitle flicker-text">LA MINACCIA DELL'IMPERATRICE CIVELLO</div>
+                    <p>INIT BRIEFING SEQUENCE...</p>
+                    <p>È un'era di prosperità per l'umanità. Grazie al Demand Galattico, una vasta rete di cooperazione interplanetaria, le colonie terrestri fioriscono tra le stelle.</p>
+                    <p>WARNING: ENEMY INTEL DETECTED</p>
+                    <p>Sul pianeta Nethex, la sanguinaria Imperatrice Civello governa con pugno di ferro. Il suo unico scopo è vedere distrutto il Demand Galattico e l'intera civiltà terrestre.</p>
+                    <p>Per compiere la sua missione di distruzione, l'Imperatrice ha inviato il temibile Comandante Scuderi con le sue truppe d'élite di Backoffice, pronte ad annientare la flotta del Demand.</p>
+                    <p>CADET PROFILE LOADING...</p>
+                    <p>Tu sei un semplice cadetto del Demand Galattico, assegnato alla guida dell'intercettore sperimentale Raptor-X dall'Ammiraglio Condor, valoroso baluardo della speranza della Terra.</p>
+                    <p>MISSION DIRECTIVE FOLLOWS:</p>
+                    <p>La tua missione è affrontare le truppe Backoffice, penetrare le loro difese e fermare il Comandante Scuderi prima che sia troppo tardi.</p>
+                    <p>MISSION STATUS: IN PROGRESS</p>
+                    <p>RAPTOR-X CONTROLS INITIALIZED</p>
+                    <p>GOOD LUCK, CADET<span class="cursor"></span></p>
+                </div>
+            </div>
+        </div>
+        <button id="skipIntroButton">SKIP INTRO (SPACE)</button>
+        <div class="crt-effect"></div>
+    </div>
+
+    <!-- Schermata Registrazione Cadetto -->
+    <div id="cadetRegistrationScreen">
+        <div id="cadetRegistrationContainer"></div>
+    </div>
+
+    <!-- Layout Gioco Principale -->
+    <div id="mainLayout">
+        <div id="highScoreContainer">
+            <div id="titleHeader">
+                 <canvas id="titleLogoCanvas" width="120" height="60"></canvas>
+                 <h1>CONDORSPACE</h1>
+                 <h2>NETHEX CONTRO IL DEMAND GALATTICO</h2>
+            </div>
+            <div id="highScoreContent">
+                 <h3>WALL OF FAME</h3>
+                 <ul id="highScoreList">
+                      <li><span>Loading...</span><span></span></li>
+                 </ul>
+                 <div class="instructions"> Frecce/WASD: Muovi<br> Spazio: Spara<br> P: Pausa </div>
+            </div>
+        </div>
+        <div id="canvasWrapper">
+            <canvas id="gameCanvas" width="480" height="640" tabindex="0"></canvas>
+            <div id="bossHealthBarContainer">
+                <div id="bossHealthBar"></div>
+                <div id="bossHealthText">COMANDANTE SCUDERI</div>
+            </div>
+            <button id="startButton" class="overlayButton">Inizia Partita</button>
+            <div id="gameOverOverlay">
+                <h2>FINE PARTITA</h2>
+                <p>Punteggio Finale: <span id="finalScore">0</span></p>
+                <div id="highScoreEntry">
+                    <label for="playerNameInput">Congratulazioni! Nuovo Record!</label>
+                    <input type="text" id="playerNameInput" placeholder="Inserisci nome (3-10 caratteri)" maxlength="10" minlength="3">
+                    <button id="saveScoreButton" class="overlayButton">Salva Punteggio</button>
+                </div>
+                <button id="restartButton" class="overlayButton">Ricomincia</button>
+            </div>
+            <div id="pauseOverlay">PAUSA</div>
+            <div id="uiMessageDisplay"></div>
+        </div>
+        <div id="uiSidebar">
+            <h3>STATO</h3>
+            <p>Punteggio: <span id="scoreValue">0</span></p>
+            <p>Vite: <span id="livesValue">3</span></p>
+            <p>Salute: <span id="healthValue">10/10</span></p>
+            <div id="healthBarContainer"><div id="healthBar"></div></div>
+            <p>Arma: <span id="weaponValue">Standard</span></p>
+            <p>Stato: <span id="statusValue">OK</span></p>
+            <p>Cristalli: <span id="crystalCounter">0</span></p>
+            <p>Valore: <span id="crystalValue">0</span></p>
+            <p>Ondata: <span id="waveValue">-</span></p>
+            <p>Livello: <span id="levelValue">1</span></p>
+            <p>Nemici: <span id="enemiesValue">0</span></p>
+        </div>
+        
+        <!-- Logo PARALLAX piccolo -->
+        <div id="parallaxLogoSmall"></div>
+    </div>
+
+    <!-- Script del gioco -->
+    <script src="js/audio.js"></script>
+    <script src="js/entities.js"></script>
+    <script src="js/boss.js"></script>
+    <script src="js/crystals.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/intro.js"></script>
+    <script src="js/cadet-registration.js"></script>
+    <script src="js/game.js"></script>
+    
+    <!-- Script per la sequenza di introduzione migliorata -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pre-start screen handling
+            const preStartScreen = document.getElementById('preStartScreen');
+            const preStartButton = document.getElementById('preStartButton');
+            const splashScreen = document.getElementById('splashScreen');
+            
+            // Nascondi l'intro inizialmente
+            const introOverlay = document.getElementById('introOverlay');
+            if (introOverlay) introOverlay.style.display = 'none';
+            
+            if (preStartButton && preStartScreen) {
+                preStartButton.addEventListener('click', function() {
+                    // Inizializza sistema audio
+                    if (window.AudioSystem && typeof window.AudioSystem.init === 'function') {
+                        window.AudioSystem.init(() => {
+                            // Sblocca contesto audio (ora funzionerà perché c'è stata interazione)
+                            if (window.AudioSystem.resumeContext) {
+                                window.AudioSystem.resumeContext(() => {
+                                    console.log("Audio context initialized and resumed successfully!");
+                                    // Riproduce un suono di avvio
+                                    if (window.AudioSystem.playButtonSound) {
+                                        window.AudioSystem.playButtonSound();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    
+                    // Nascondi schermata pre-start
+                    preStartScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        preStartScreen.style.display = 'none';
+                        
+                        // Mostra lo splash screen del logo PARALLAX
+                        if (splashScreen) {
+                            splashScreen.style.display = 'block';
+                            
+                            // Imposta il logo PARALLAX
+                            const parallaxLogoSplash = document.getElementById('parallaxLogoSplash');
+                            if (parallaxLogoSplash) {
+                                parallaxLogoSplash.style.backgroundImage = "url('assets/images/logo.png')";
+                                parallaxLogoSplash.style.width = "200px";
+                                parallaxLogoSplash.style.height = "200px";
+                            }
+                            
+                            // Riproduce la musica del logo PARALLAX
+                            if (window.AudioSystem && typeof window.AudioSystem.playLogoMusic === 'function') {
+                                window.AudioSystem.playLogoMusic();
+                            }
+                            
+                            // Dopo 6 secondi (tempo più lungo per il logo) avvia l'intro
+                            setTimeout(function() {
+                                splashScreen.style.opacity = '0';
+                                setTimeout(function() {
+                                    splashScreen.style.display = 'none';
+                                    
+                                    // Mostra l'intro con titolo
+                                    if (introOverlay) {
+                                        introOverlay.style.display = 'flex';
+                                    }
+                                    
+                                    // Disegna il logo Raptor-X
+                                    if (typeof window.drawRaptorXLogo === 'function') {
+                                        const introLogoCanvas = document.getElementById('introLogoCanvas');
+                                        window.drawRaptorXLogo(introLogoCanvas);
+                                    }
+                                    
+                                    // Avvia la sequenza intro
+                                    if (typeof window.startIntroSequence === 'function') {
+                                        window.startIntroSequence();
+                                    }
+                                }, 1000);
+                            }, 6000); // Logo PARALLAX visibile per esattamente 6 secondi
+                        }
+                    }, 1000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
